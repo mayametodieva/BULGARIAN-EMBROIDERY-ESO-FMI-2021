@@ -1,0 +1,405 @@
+﻿<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Българска шевица</title>
+
+	<script src="suica.min.js"></script>
+	<link rel = "stylesheet" type="text/css" href="styles.css">
+
+	<script>
+            
+		function main()
+		{
+			p = new Suica();
+
+            background([1,0.92,0.8]);
+			obj = null;
+
+			p.gl.canvas.addEventListener("mousedown", mouseDown);
+			p.gl.canvas.addEventListener("mousemove", mouseMove);
+			p.gl.canvas.addEventListener("mouseup", mouseUp);
+
+			orthographic(-10000,10000);
+			lookAt([0,0,100],[0,0,0],[0,1,0]);
+
+            Bulgarian_dress = group([
+                //skirt
+                conoid([0,-200,-100], [130,130], 300).custom({color: [1,1,1], focus: [0,1,0]}),
+                cylinder([0,-230,-100], 130, 30).custom({color: [1,1,1], focus: [0,1,0]}),
+                pyramid([0,-105,-100], 100, 200, 20).custom({color: [0.8,0,0], focus: [0,1,0]}),
+                cylinder([0,-115,-100], 100, 10).custom({color: [0.8,0,0], focus: [0,1,0]}),
+                
+                //apron
+                conoid([0,-170,8], [70,70], 280).custom({color: [0,0,0], focus: [0,1,0]}),
+                conoid([0,-160,7], [80,60], 270).custom({color: [0,0.55,0], focus: [0,1,0]}),
+                
+                //top
+                spheroid([0,95,0], [43,70,35]).custom({color:[1,1,1]}),
+                spheroid([20,140,10], [30,55,45]).custom({color:[1,1,1], focus: [1,-0.5,0]}),
+                spheroid([-20,140,10], [30,55,45]).custom({color:[1,1,1], focus: [1,0.5,0]}),
+                spheroid([0,138,0], [50,60,37]).custom({color:[1,1,1]}),
+                
+                //left sleeve
+                conoid([135,-20,30], [40,40], 200).custom({color: [1,1,1], focus: [-0.4,1,0]}),
+                cylinder([87,100,30], 15,40).custom({focus: [-0.4,1,0]}).custom({color: [0.8,0,0]}),
+                spheroid([62,160,30], [25,22,35]).custom({focus: [-0.4,1,0], color:[1,1,1]}),
+
+                //right sleeve
+                conoid([-135,-20,30], [40,40], 200).custom({color: [1,1,1], focus: [0.4,1,0]}),
+                cylinder([-87,100,30], 15,40).custom({focus: [0.4,1,0]}).custom({color: [0.8,0,0]}),
+                spheroid([-62,160,30], [25,22,35]).custom({focus: [0.4,1,0], color:[1,1,1]}),
+
+                //neck
+                cuboid([-20,200,30], [10,60,15]).custom({color: [1,1,1], focus: [0,1,0], spin: 20}),
+                cuboid([20,200,30], [10,60,15]).custom({color: [1,1,1], focus: [0,1,0], spin: -20}),
+                cone([0,198,50], 4, 60).custom({color: [1,0.92,0.8], focus: [0,-1,0], light: false}), 
+                
+                //belt
+                cylinder([0,27.5,0], 33, 20).custom({focus: [0,1,0]}).custom({color: [0.8,0,0]}),
+                spheroid([15,36,30], [13,13,9]).custom({color:[1,0.75,0]}),
+                spheroid([-15,36,30], [13,13,9]).custom({color:[1,0.75,0]}),
+                spheroid([0,36,30], [7,13,15]).custom({color:[1,0.75,0]}),
+
+                square([16,36,40], 12).custom({color: [0.7,0.4,0], mode: Suica.LINE, spin: radians(45)}),
+                square([-16,36,40], 12).custom({color: [0.7,0.4,0], mode: Suica.LINE, spin: radians(45)}),
+                
+                square([16,36,40], 9).custom({color: [0.7,0.4,0], mode: Suica.LINE}),
+                square([-16,36,40], 9).custom({color: [0.7,0.4,0], mode: Suica.LINE}),
+
+                square([16,36,40], 6).custom({color: [0.7,0.4,0], mode: Suica.LINE, spin: radians(45)}),
+                square([-16,36,40], 6).custom({color: [0.7,0.4,0], mode: Suica.LINE, spin: radians(45)}),              
+
+                conoid([17,35,25],[15, 10],20).custom({color: [1,0.75,0], focus: [0.9,1,0]}),
+                conoid([-17,35,25],[15, 10],20).custom({color: [1,0.75,0], focus: [-0.9,1,0]}),
+
+                //vest
+                cuboid([-40,130,40], [30,30,130]).custom({color: [0.2,0.2,0.2], focus: [0,1,0], spin: 20}),
+                cuboid([40,130,40], [30,30,130]).custom({color: [0.2,0.2,0.2], focus: [0,1,0], spin: -20})
+            ]);
+
+            //points
+            //skirt
+            point([-110,-215,100]).custom({pointSize: 12, interactive: true});
+
+            //right sleeve
+            point([105,-23,100]).custom({pointSize: 12, interactive: true});
+         
+            //vest - right
+            point([35,185,100]).custom({pointSize: 12, interactive: true});
+
+            //vest - left  
+            point([-35,185,100]).custom({pointSize: 12, interactive: true});
+
+            //neck - right
+            point([-36,200,100]).custom({pointSize: 12, interactive: true});
+            //neck - left
+            point([36,200,100]).custom({pointSize: 12, interactive: true});
+
+            //apron
+            point([0,10,100]).custom({pointSize: 12, interactive: true});
+
+            //top
+            point([0,130,100]).custom({pointSize: 12, interactive: true});
+
+            //upper skirt
+            point([-83,-90,100]).custom({pointSize: 12, interactive: true});
+
+
+			Needle = group ([
+                    spheroid([0,-95,0], [4,10,5]).custom({color: [0.7,0.7,0.7]}),
+					spheroid([0,-95,0], [3,9,6]).custom({color: [1,0.92,0.8]}),
+                    cone([0,-97,0], 4.1, 100).custom({color: [0.7,0.7,0.7], focus: [0,1,0]}),
+                ]);
+            Needle.focus = [0,0,0];
+            Needle.spin = radians(45);
+
+			mainColor = [0.6,0.2,0];
+			counter = 0;
+
+
+        }
+
+		function mouseMove(event) {
+			let x = event.clientX - event.target.offsetLeft - event.target.offsetWidth/2;
+			let y = -(event.clientY - event.target.offsetTop - event.target.offsetHeight/2);
+			Needle.center = [x,y,1000];
+		}
+
+		function mouseDown(event) {
+			var i = event.clientX;
+			var j = event.clientY;
+
+			obj = p.objectAtPoint(i,j);
+		}
+
+		function mouseUp(event) {
+
+            if (obj) {
+                if (obj.center[0] == 105) {
+                    p.nextFrame =sleevesEmbroidery();
+                }
+                else if (obj.center[0] == -110) {
+                    p.nextFrame = skirtEmbroidery();
+                }
+                else if (obj.center[0] == 35) {
+                    p.nextFrame = vestEmbroidery(-35);
+                    //p.nextFrame = vestEmbroidery(35);
+                }
+                else if (obj.center[0] == -35) {
+                    p.nextFrame = vestEmbroidery(35);
+                }
+                else if (obj.center[0] == -36) {
+                    p.nextFrame = neckEmbroidery(35);
+                }
+                else if (obj.center[0] == 36) {
+                    p.nextFrame = neckEmbroidery(-14);
+                }
+                else if (obj.center[0] == 0 && obj.center[1] == 10) {
+                    p.nextFrame = apronEmbroidery();
+                }
+                else if (obj.center[0] == 0 && obj.center[1] == 130) {
+                    p.nextFrame = topEmbroidery();
+                }
+                else if (obj.center[0] == -83) {
+                    p.nextFrame = upperSkirtEmbroidery();
+                } 
+                obj.visible = false;
+                counter++;
+                showGame();
+            }
+			obj = null;
+		}
+
+		function changeColor(color) {
+			mainColor = color;
+		}
+
+        function showGame() {
+            console.log(counter);
+            game = document.getElementById("toGame");
+            if (counter == 9) {
+                game.style.display = 'block';
+            }
+        }
+
+        function topEmbroidery() {
+            let j = 19;
+            for (let i = 190; i >=140; i-=5) {
+                segment([j, i, 100], [j - 7, i - 5, 100]);
+                segment([-j, i, 100], [-(j - 7), i - 5, 100]);
+
+                segment([j, i - 5, 100], [j - 7, i, 100]);
+                segment([-j, i - 5, 100], [-(j - 7), i, 100]);
+                j-=1.5;
+            }
+
+            segment([16, 190, 100], [-2, 130, 100]).custom({color: [0.8,0,0]});
+            segment([-16, 190, 100], [2, 130, 100]).custom({color: [0.8,0,0]});
+        }
+
+        function apronEmbroidery() {
+            
+            let j = 20;
+                for (let i = 60; i >= 10; i-=5) {
+                    let a = segment([-j, -i, 100],[0,-i + 20,100]).custom({color:[1,0.75,0]});
+                    let b = segment([0, -i + 20, 100],[j,-i,100]).custom({color:[1,0.75,0]});         
+                    if (i%2 == 0) {
+                        a.color = [0,0,0];
+                        b.color = [0,0,0];
+                    }
+                    j-=0.5;
+                }
+
+                for (let i = 25; i >= 5; i-=5) {
+                    var a = square([0, -65, 100], i).custom({color: [1,0.75,0], mode : Suica.LINE, spin: radians(45)});
+                    
+                    if (i % 2 == 0) {
+                        a.color = [0,0,0];
+                    }
+                }
+
+                segment([-25, -65, 100], [25,-65,100]).custom({color: [0.8,0.8,0.8]});
+                segment([0, 10, 100], [0,-155,100]).custom({color: [0.8,0.8,0.8]});
+
+            for (let i = 30; i > -30; i-=5) {
+                var a = segment([-i, -155, 100], [-(i - 10),i - 100,100]).custom({color:[0.07,0,0.4]});
+                var b = segment([i, -155, 100], [(i - 10),i - 100,100]).custom({color:[0.8,0,0]});
+                if (i%2 == 0) {
+                    a.color = [1,0.75,0];
+                    b.color = [0,0,0];
+                }
+            }
+        }
+
+        function neckEmbroidery(n) {
+            for (let i = n; i > n - 20; i-=5) {
+                segment([-i,195,100], [-(i-5), 205, 100]);
+                segment([-i + 7,195,100], [-i, 205, 100]);
+            }
+            segment([-n,200,100], [-(n-20), 200, 100]).custom({color: [0.8,0,0]});
+        }
+
+        function vestEmbroidery(n) {
+            segment([-n, 190, 100], [-n, 70, 100]);
+
+            for (let i = 190; i > 70; i-=5) {
+                segment([-n, i, 100], [-(n-5), i-5, 100]).custom({color:[0.8,0,0]});
+                segment([-(n-5), i, 100], [-n, i-5, 100]).custom({color:[1,1,1]});
+
+                segment([-n, i, 100], [-(n+5), i-5, 100]).custom({color:[1,0.75,0]});
+                segment([-(n+5), i, 100], [-n, i-5, 100]).custom({color:[1,1,1]}); 
+            }
+        }
+
+        function sleevesEmbroidery() {
+            let j = 20;
+            for (let i = 101; i < 170; i+= 5) {
+                
+                    segment([i,-j,100], [(i-5),-j - 10,100]);
+                    segment([-i,-j,100], [-(i-5),-j - 10,100]);
+
+                    segment([i - 5,-j,100], [i,-j - 10,100]);
+
+                    segment([-(i - 5),-j,100], [-i,-j - 10,100]);
+                    j-=2;  
+            }
+            segment([100,-25,100], [165,2,100]).custom({color: [1,0,0]});
+            segment([-100,-25,100], [-165,2,100]).custom({color: [1,0,0]});  
+
+            segment([101,-31,100], [168,-3,100]).custom({color: [0,0,0]});
+            segment([-101,-31,100], [-168,-3,100]).custom({color: [0,0,0]}); 
+
+            segment([95,-19,100], [163,9,100]).custom({color: [0,0,0]});
+            segment([-95,-19,100], [-163,9,100]).custom({color: [0,0,0]}); 
+        }
+
+        function upperSkirtEmbroidery() {
+            //circular ornaments over pleats
+            spheroid([-83,-90, 100], [5,15,7]).custom({focus: [1,-0.5,0], color: [0.07,0,0.4]});
+            spheroid([83,-90, 100], [5,15,7]).custom({focus: [1,0.5,0], color: [0.07,0,0.4]});
+
+            spheroid([-63,-90, 100], [5,15,7]).custom({focus: [1,-0.3,0], color: [0.07,0,0.4]});
+            spheroid([63,-90, 100], [5,15,7]).custom({focus: [1,0.3,0], color: [0.07,0,0.4]});
+
+            ellipse([-83,-90,120], [3,10]).custom({ color: [1,0.75,0], mode: Suica.LINE, spin: radians(25)});
+            ellipse([83,-90,120], [3,10]).custom({ color: [1,0.75,0], mode: Suica.LINE, spin: radians(-25)});
+
+            ellipse([-63,-90,120], [3,10]).custom({ color: [1,0.75,0], mode: Suica.LINE, spin: radians(17)});
+            ellipse([63,-90,120], [3,10]).custom({ color: [1,0.75,0], mode: Suica.LINE, spin: radians(-17)});
+
+            sphere([-83,-90,130], 5).custom({color: [1,1,1]});
+            sphere([-63,-90,130], 5).custom({color: [1,1,1]});
+
+            sphere([83,-90,130], 5).custom({color: [1,1,1]});
+            sphere([63,-90,130], 5).custom({color: [1,1,1]});
+
+            //lines through pleats
+            let j = 94, t = 52;
+            for (let i = 94; i >= 86; i-=4) {
+                segment([-j, -i,140], [-t, -(i + 2), 140]).custom({color: [0.9,0.9,0.9]});
+                segment([j, -i,140], [t, -(i + 2), 140]).custom({color: [0.9,0.9,0.9]});
+                j-=2; t-=1;
+            }
+
+            //border of the skirt
+            for (let i = 100; i >= 60; i-=5) {
+                segment([-i, -115, 120], [-(i - 5), -110, 120]).custom({color: [0.8,0.8,0.8]});
+                segment([i, -115, 120], [(i - 5), -110, 120]).custom({color: [0.8,0.8,0.8]});   
+            }
+
+            for (let i = 100; i >= 60; i-=5) {
+                segment([-i, -105, 120], [-(i - 5), -110, 120]).custom({color: [0.8,0.8,0.8]});
+                segment([i, -105, 120], [(i - 5), -110, 120]).custom({color: [0.8,0.8,0.8]});   
+            }
+
+            segment([-100, -110, 120], [-55, -110, 120]).custom({color: [0.07,0,0.4]});
+            segment([100, -110, 120], [55, -110, 120]).custom({color: [0.07,0,0.4]});
+        }
+
+        function skirtEmbroidery() {
+
+            //vertical romboids
+            for (let i = 130; i >= -110; i-=20) {
+                segment([-i, -220, 100], [-(i-20), -200, 100]);
+                segment([i, -220, 100], [(i-20), -200, 100]);
+            }
+
+            //horizontal romboids
+            for (let i = 120; i >=-100; i-=20) {
+                segment([-i, -210, 100], [-(i-20), -220, 100]).custom({color:[1,0,0]});
+                segment([i, -210, 100], [(i-20), -220, 100]).custom({color:[1,0,0]});
+                segment([-i, -210, 100], [-(i-20), -200, 100]).custom({color:[1,0,0]}); 
+                segment([i, -210, 100], [(i-20), -200, 100]).custom({color:[1,0,0]});     
+            }
+
+            //upper-lower lines
+            segment([130, -200, 100], [-130, -200, 100]).custom({color:[0,0,0]});
+            segment([130, -220, 100], [-130, -220, 100]).custom({color:[0,0,0]});
+
+            //ends
+            segment([130, -210, 100], [120, -200, 100]).custom({color:[1,0,0]});
+            segment([-130, -210, 100], [-120, -200, 100]).custom({color:[1,0,0]});
+            segment([-130, -210, 100], [-120, -220, 100]).custom({color:[1,0,0]});
+            segment([130, -210, 100], [120, -220, 100]).custom({color:[1,0,0]});
+        }
+
+	</script>	
+</head>
+
+<body onload="main()">
+    <h1>❖ Българска шевица ❖</h1>
+    <h4>Проект по Езици и среди на обучение|Мая Методиева|2022</h4>
+
+    <div class="container">
+        <div>
+            <p>
+                <div class="firstParagraph">
+                    <h3>❖ История и символика</h3>
+                    </div>
+            </p>
+        
+                <p><div class="text1">
+                    <p>Българската шевица представлява символична нашивка върху дрехите.</p> 
+                    <p> Всяка форма на 
+                        шевицата притежава уникална символика, свързана с елементи на растителния, животинския, космическия и светът на семейното огнище.</p>
+                        
+                    <p>С началото на избродирането на орнаментите върху облеклото на хората, смисълът на шевицата бива доусъвършен, като 
+                       зависейки от мястото на изшиване, тя носи смисъла на защита, здраве и благополучие.</p>
+                    
+                    <p>Българската шевица обединява елементи на славянската и прабългарската култура и основни символи и характерни 
+                        обекти от ежедневието, като геометрични фигури, линии, кръстове, розетки и много други.</p> 
+                    
+                </div></p>
+        </div>
+
+
+        <div class="canvasPannel">
+            <canvas id="firstCanvas" width="350" height="500"></canvas>
+        </div>
+
+        <div>
+            <p><div class="secondParagraph">
+                <h3>Игра-"Народна носия" ❖</h3>
+            </div></p>
+
+            <p><div class="text2">
+                <p>
+                    Инструкции:
+                </p>
+                <ol>
+                    <li>Плъзнете иглата по повърхността на народната носия</li>
+                    <li>Изберете произволна червена точка и щракнете върху нея с десен бутон на мишката, за да получите визуализация на традиционна българска шевица</li>
+                    <li>Повторете операцията и за останалите точки</li>
+                    <li>Щом всички шевици бъдат изшити ще получите достъп до следващата игра</li>
+                </ol>
+            </div>
+            </p> 
+
+            <p button id="toGame" onclick="location.href='Игра.html'" type="button">>< Към играта ><</p>
+        </div>
+        
+    </div>
+
+</body>
+ 
